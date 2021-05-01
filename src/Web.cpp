@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <Update.h>
 #include <nvsDump.h>
 #include <esp_task_wdt.h>
 #include "freertos/ringbuf.h"
@@ -141,6 +142,29 @@ void webserverStart(void) {
                 request->send_P(200, "text/html", backupRecoveryWebsite);
             },
             handleUpload);
+
+        // NVS-backup-upload
+        wServer.on(
+            "/update", HTTP_POST, [](AsyncWebServerRequest *request) {
+                request->send(200, "text/html", restartWebsite); },
+            [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+                if (!index)
+                {
+                    Update.begin();
+                    Serial.println("Start firmware update.");
+                }
+
+                Update.write(data, len);
+                Serial.print(".");
+
+                if (final)
+                {
+                    Update.end(true);
+                    Serial.println("Firmware update finished.");
+                    Serial.flush();
+                    ESP.restart();
+                }
+            });
 
         // ESP-restart
         wServer.on("/restart", HTTP_GET, [](AsyncWebServerRequest *request) {
