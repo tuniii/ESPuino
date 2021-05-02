@@ -161,8 +161,6 @@ void webserverStart(void) {
                 {
                     Update.end(true);
                     Serial.println("Firmware update finished.");
-                    Serial.flush();
-                    ESP.restart();
                 }
             });
 
