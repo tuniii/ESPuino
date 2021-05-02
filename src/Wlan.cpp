@@ -99,6 +99,7 @@ void Wlan_Cyclic(void) {
             // zero conf, make device available as <hostname>.local
             if (MDNS.begin(hostname.c_str())) {
                 MDNS.addService("http", "tcp", 80);
+                MDNS.addService("espuino", "tcp", 80);
             }
         #endif
 
