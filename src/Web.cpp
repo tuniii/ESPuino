@@ -138,6 +138,15 @@ void webserverStart(void) {
 
         // NVS-backup-upload
         wServer.on(
+            "/info", HTTP_GET, [](AsyncWebServerRequest *request) {
+                String info = "Free heap: " + String(ESP.getFreeHeap());
+                info += "\nFree PSRAM: " + String(ESP.getFreePsram());
+                request->send_P(200, "text/plain", info.c_str());
+            },
+            handleUpload);
+
+        // NVS-backup-upload
+        wServer.on(
             "/upload", HTTP_POST, [](AsyncWebServerRequest *request) {
                 request->send_P(200, "text/html", backupRecoveryWebsite);
             },
