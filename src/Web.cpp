@@ -136,14 +136,15 @@ void webserverStart(void) {
             request->send(200, "text/plain", Log_GetRingBuffer());
         });
 
-        // NVS-backup-upload
+        // Info
         wServer.on(
             "/info", HTTP_GET, [](AsyncWebServerRequest *request) {
                 String info = "Free heap: " + String(ESP.getFreeHeap());
+                //heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+                info += "\nLargest free heap block: " + String((uint32_t)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
                 info += "\nFree PSRAM: " + String(ESP.getFreePsram());
                 request->send_P(200, "text/plain", info.c_str());
-            },
-            handleUpload);
+            });
 
         // NVS-backup-upload
         wServer.on(
