@@ -70,6 +70,12 @@ bool fileValid(const char *_fileItem) {
     char *subst;
     subst = strrchr(_fileItem, ch); // Don't use files that start with .
 
+    if(NULL == subst)
+    {
+        Serial.println("Error: NULL ptr in fileValid!");
+        return false;
+    }
+
     return (!startsWith(subst, (char *) "/.")) &&
            (endsWith(_fileItem, ".mp3") || endsWith(_fileItem, ".MP3") ||
             endsWith(_fileItem, ".aac") || endsWith(_fileItem, ".AAC") ||
@@ -113,7 +119,7 @@ char **SdCard_ReturnPlaylist(const char *fileName) {
             return NULL;
         }
         Log_Println((char *) FPSTR(fileModeDetected), LOGLEVEL_INFO);
-        strncpy(fileNameBuf, (char *) fileOrDirectory.name(), sizeof(fileNameBuf) / sizeof(fileNameBuf[0]));
+        strncpy(fileNameBuf, (char *) fileOrDirectory.path(), sizeof(fileNameBuf) / sizeof(fileNameBuf[0]));
         if (fileValid(fileNameBuf))
         {
             files = (char **) x_malloc(sizeof(char *) * 2);

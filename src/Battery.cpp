@@ -65,6 +65,8 @@ float Battery_GetVoltage(void) {
         }
         averagedAnalogValue /= 20.0;
         return (averagedAnalogValue / maxAnalogValue) * referenceVoltage * factor + offsetVoltage;
+    #else
+        return 0.0f;
     #endif
 }
 

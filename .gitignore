@@ -6,6 +6,7 @@ venv/
 .vscode/ipch
 .DS_Store
 .idea/
+.core
 CMakeLists.txt
 CMakeListsPrivate.txt
 cmake-build-az-delivery-devkit-v4/
