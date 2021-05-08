@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Update.h>
-#include <nvsDump.h>
+#include <nvs.h>
 #include <esp_task_wdt.h>
 #include "freertos/ringbuf.h"
 #include "ESPAsyncWebServer.h"
@@ -831,63 +831,21 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
 // Dumps all RFID-entries from NVS into a file on SD-card
 bool Web_DumpNvsToSd(const char *_namespace, const char *_destFile) {
     Led_SetPause(true);          // Workaround to prevent exceptions due to Neopixel-signalisation while NVS-write
-    esp_partition_iterator_t pi; // Iterator for find
-    const esp_partition_t *nvs;  // Pointer to partition struct
-    esp_err_t result = ESP_OK;
-    const char *partname = "nvs";
-    uint8_t pagenr = 0;   // Page number in NVS
-    uint8_t i;            // Index in Entry 0..125
-    uint8_t bm;           // Bitmap for an entry
-    uint32_t offset = 0;  // Offset in nvs partition
-    uint8_t namespace_ID; // Namespace ID found
 
-    pi = esp_partition_find(ESP_PARTITION_TYPE_DATA,   // Get partition iterator for
-                            ESP_PARTITION_SUBTYPE_ANY, // this partition
-                            partname);
-    if (pi) {
-        nvs = esp_partition_get(pi);        // Get partition struct
-        esp_partition_iterator_release(pi); // Release the iterator
-        dbgprint("Partition %s found, %d bytes", partname, nvs->size);
-    } else {
-        snprintf(Log_Buffer, Log_BufferLength, "Partition %s not found!", partname);
-        Log_Println(Log_Buffer, LOGLEVEL_ERROR);
-        return NULL;
-    }
-    namespace_ID = FindNsID(nvs, _namespace); // Find ID of our namespace in NVS
     File backupFile = gFSystem.open(_destFile, FILE_WRITE);
     if (!backupFile) {
         return false;
     }
-    while (offset < nvs->size) {
-        result = esp_partition_read(nvs, offset, // Read 1 page in nvs partition
-                                    &buf,
-                                    sizeof(nvs_page));
-        if (result != ESP_OK) {
-            snprintf(Log_Buffer, Log_BufferLength, "Error reading NVS!");
-            Log_Println(Log_Buffer, LOGLEVEL_ERROR);
-            return false;
-        }
 
-        i = 0;
-
-        while (i < 126) {
-            bm = (buf.Bitmap[i / 4] >> ((i % 4) * 2)) & 0x03; // Get bitmap for this entry
-            if (bm == 2) {
-                if ((namespace_ID == 0xFF) || // Show all if ID = 0xFF
-                    (buf.Entry[i].Ns == namespace_ID)) { // otherwise just my namespace
-                    if (isNumber(buf.Entry[i].Key)) {
-                        String s = gPrefsRfid.getString((const char *)buf.Entry[i].Key);
-                        backupFile.printf("%s%s%s%s\n", stringOuterDelimiter, buf.Entry[i].Key, stringOuterDelimiter, s.c_str());
-                    }
-                }
-                i += buf.Entry[i].Span; // Next entry
-            } else {
-                i++;
-            }
-        }
-        offset += sizeof(nvs_page); // Prepare to read next page in nvs
-        pagenr++;
-    }
+    // Example of listing all the key-value pairs of any type under specified partition and namespace
+    nvs_iterator_t it = nvs_entry_find("nvs", _namespace, NVS_TYPE_STR);
+    while (it != NULL) {
+        nvs_entry_info_t info;
+        nvs_entry_info(it, &info);
+        String s = gPrefsRfid.getString((const char *)info.key);
+        backupFile.printf("%s%s%s%s\n", stringOuterDelimiter, info.key, stringOuterDelimiter, s.c_str());
+        it = nvs_entry_next(it);
+    };
 
     backupFile.close();
     Led_SetPause(false);
