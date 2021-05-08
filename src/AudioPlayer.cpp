@@ -103,7 +103,7 @@ void AudioPlayer_Init(void) {
         "mp3play",             /* Name of the task */
         11000,                 /* Stack size in words */
         NULL,                  /* Task input parameter */
-        20,                    /* Priority of the task */
+        4,                    /* Priority of the task */
         NULL,                  /* Task handle. */
         1                      /* Core where the task should run */
     );
