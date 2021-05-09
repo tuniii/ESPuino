@@ -21,6 +21,14 @@
 #define AUDIOPLAYER_VOLUME_MIN 0u
 #define AUDIOPLAYER_VOLUME_INIT 3u
 
+// Overwrite new operator of Audio class
+class AudioCustom: public Audio {
+public:
+   void *operator new(size_t size) {
+       return psramFound() ? ps_malloc(size) : malloc(size);
+   }
+};
+
 playProps gPlayProperties;
 
 // Volume
@@ -203,16 +211,14 @@ void AudioPlayer_HeadphoneVolumeManager(void) {
     #endif
 }
 
-class AudioCustom: public Audio {
-public:
-   void *operator new(size_t size) {
-       return psramFound() ? ps_malloc(size) : malloc(size);
-   }
-};
-
 // Function to play music as task
 void AudioPlayer_Task(void *parameter) {
-    AudioCustom *audio = new AudioCustom();
+    #ifdef BOARD_HAS_PSRAM
+        AudioCustom *audio = new AudioCustom();
+    #else
+        static Audio audioAsStatic;
+        Audio *audio = &audioAsStatic;
+    #endif
     uint8_t settleCount = 0;
     audio->setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
     audio->setVolume(AudioPlayer_GetInitVolume());
