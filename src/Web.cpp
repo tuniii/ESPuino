@@ -32,6 +32,8 @@
     #include "HTMLmanagement_EN.h"
 #endif
 
+extern const uint8_t index_html_start[] asm("_binary_webui_dist_index_html_gz_start");
+extern const size_t index_html_size asm("_binary_webui_dist_index_html_gz_size");
 
 typedef struct {
     char nvsKey[13];
@@ -129,6 +131,14 @@ void webserverStart(void) {
         // Default
         wServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
             request->send_P(200, "text/html", management_HTML, templateProcessor);
+        });
+
+        // to avoid multiple requests to ESP
+        wServer.on("/vue", [](AsyncWebServerRequest *request) {
+            AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", index_html_start, (size_t)&index_html_size);
+            response->addHeader("Content-Disposition", "inline; filename=\"index.html\"");
+            response->addHeader("Content-Encoding", "gzip");
+            request->send(response);
         });
 
         // Log

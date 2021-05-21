@@ -25,8 +25,8 @@
     //########################## MODULES #################################
     //#define PORT_EXPANDER_ENABLE          // When enabled, buttons can be connected via port-expander PCA9555
     #define MDNS_ENABLE                     // When enabled, you don't have to handle with ESPuino's IP-address. If hostname is set to "ESPuino", you can reach it via ESPuino.local
-    #define MQTT_ENABLE                     // Make sure to configure mqtt-server and (optionally) username+pwd
-    #define FTP_ENABLE                      // Enables FTP-server; DON'T FORGET TO ACTIVATE AFTER BOOT BY PRESSING PAUSE + NEXT-BUTTONS (IN PARALLEL)!
+    //#define MQTT_ENABLE                     // Make sure to configure mqtt-server and (optionally) username+pwd
+    //#define FTP_ENABLE                      // Enables FTP-server; DON'T FORGET TO ACTIVATE AFTER BOOT BY PRESSING PAUSE + NEXT-BUTTONS (IN PARALLEL)!
     //#define NEOPIXEL_ENABLE                 // Don't forget configuration of NUM_LEDS if enabled
     //#define NEOPIXEL_REVERSE_ROTATION     // Some Neopixels are adressed/soldered counter-clockwise. This can be configured here.
     #define LANGUAGE 1                      // 1 = deutsch; 2 = english
