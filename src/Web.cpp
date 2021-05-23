@@ -35,6 +35,9 @@
 extern const uint8_t index_html_start[] asm("_binary_webui_dist_index_html_gz_start");
 extern const size_t index_html_size asm("_binary_webui_dist_index_html_gz_size");
 
+extern const uint8_t app_js_start[] asm("_binary_webui_dist_js_app_js_gz_start");
+extern const size_t app_js_size asm("_binary_webui_dist_js_app_js_gz_size");
+
 typedef struct {
     char nvsKey[13];
     char nvsEntry[275];
@@ -133,10 +136,18 @@ void webserverStart(void) {
             request->send_P(200, "text/html", management_HTML, templateProcessor);
         });
 
-        // to avoid multiple requests to ESP
+        // Vue index.html
         wServer.on("/vue", [](AsyncWebServerRequest *request) {
             AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", index_html_start, (size_t)&index_html_size);
             response->addHeader("Content-Disposition", "inline; filename=\"index.html\"");
+            response->addHeader("Content-Encoding", "gzip");
+            request->send(response);
+        });
+
+        // Vue app.js
+        wServer.on("/js/app.js", [](AsyncWebServerRequest *request) {
+            AsyncWebServerResponse *response = request->beginResponse_P(200, "text/javascript", app_js_start, (size_t)&app_js_size);
+            response->addHeader("Content-Disposition", "inline; filename=\"app.js\"");
             response->addHeader("Content-Encoding", "gzip");
             request->send(response);
         });
