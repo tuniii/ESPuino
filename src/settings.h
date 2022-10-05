@@ -46,7 +46,7 @@
     //#define PLAY_LAST_RFID_AFTER_REBOOT   // When restarting ESPuino, the last RFID that was active before, is recalled and played
     //#define USE_LAST_VOLUME_AFTER_REBOOT  // Remembers the volume used at last shutdown after reboot
     #define USEROTARY_ENABLE                // If rotary-encoder is used (don't forget to review WAKEUP_BUTTON if you disable this feature!)
-    #define BLUETOOTH_ENABLE                // If enabled and bluetooth-mode is active, you can stream to your ESPuino via bluetooth (a2dp-sink).
+    //#define BLUETOOTH_ENABLE                // If enabled and bluetooth-mode is active, you can stream to your ESPuino via bluetooth (a2dp-sink).
     //#define IR_CONTROL_ENABLE             // Enables remote control (https://forum.espuino.de/t/neues-feature-fernsteuerung-per-infrarot-fernbedienung/265)
     #define CACHED_PLAYLIST_ENABLE          // Enables playlist-caching (infos: https://forum.espuino.de/t/neues-feature-cached-playlist/515)
     //#define PAUSE_WHEN_RFID_REMOVED       // Playback starts when card is applied and pauses automatically, when card is removed (https://forum.espuino.de/t/neues-feature-pausieren-wenn-rfid-karte-entfernt-wurde/541)
@@ -56,14 +56,14 @@
 
 
     //################## select SD card mode #############################
-    #define SD_MMC_1BIT_MODE              // run SD card in SD-MMC 1Bit mode (using GPIOs 15 + 14 + 2 is mandatory!)
+    //#define SD_MMC_1BIT_MODE              // run SD card in SD-MMC 1Bit mode (using GPIOs 15 + 14 + 2 is mandatory!)
     //#define SINGLE_SPI_ENABLE             // If only one SPI-instance should be used instead of two (not yet working!)
 
 
     //################## select RFID reader ##############################
-    #define RFID_READER_TYPE_MFRC522_SPI    // use MFRC522 via SPI
+    //#define RFID_READER_TYPE_MFRC522_SPI    // use MFRC522 via SPI
     //#define RFID_READER_TYPE_MFRC522_I2C  // use MFRC522 via I2C
-    //#define RFID_READER_TYPE_PN5180       // use PN5180 via SPI
+    #define RFID_READER_TYPE_PN5180       // use PN5180 via SPI
 
     #ifdef RFID_READER_TYPE_MFRC522_I2C
         #define MFRC522_ADDR 0x28           // default I2C-address of MFRC522
